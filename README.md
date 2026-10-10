@@ -32,3 +32,13 @@ Requer `ffmpeg` e Python 3.
 - YouTube Shorts: vertical, até 3:00.
 - Instagram Reels: até 3:00 no app.
 - Upload pelo site do GitHub: até 25 MB por arquivo — vídeos maiores, use link do Google Drive.
+
+## JC-Reels (Reels automáticos, roda no notebook)
+
+A pasta `jc-reels/` tem o sistema que transforma uma decupagem 4K + uma música em vários
+Reels 9:16 cortados no ritmo. Tudo roda no notebook; nada vai para a internet.
+
+- Instalar (PowerShell): baixe `jc-reels/instalar.ps1` e rode
+  `powershell -ExecutionPolicy Bypass -File instalar.ps1`. Ele instala ffmpeg, Python e as
+  bibliotecas, e copia os scripts para `C:\JC-Reels`.
+- Processo completo: `jc-reels/CLAUDE.md`.
