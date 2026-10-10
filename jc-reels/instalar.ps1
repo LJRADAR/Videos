@@ -28,13 +28,22 @@ else {
     if (-not (Tem 'ffmpeg')) { throw 'ffmpeg não apareceu no PATH. Feche o PowerShell, abra de novo e rode este instalador outra vez.' }
 }
 
-Passo '2/4 Python'
-if (Tem 'py') { Write-Host "Python já instalado: $(py --version)" }
+Passo '2/4 Python 3.12'
+# Testa se o Python 3.12 realmente roda (o "py" pode existir apontando para um Python já removido)
+function Py312Ok {
+    if (-not (Tem 'py')) { return $false }
+    try { $null = & py -3.12 -c "print(1)" 2>&1; return ($LASTEXITCODE -eq 0) } catch { return $false }
+}
+if (Py312Ok) { Write-Host 'Python 3.12 já instalado.' }
 else {
     winget install --id Python.Python.3.12 -e --accept-source-agreements --accept-package-agreements
     AtualizarPath
-    if (-not (Tem 'py')) { throw 'Python não apareceu no PATH. Feche o PowerShell, abra de novo e rode este instalador outra vez.' }
+    if (-not (Py312Ok)) { throw 'O Python 3.12 não respondeu. Feche o PowerShell, abra de novo e rode este instalador outra vez.' }
 }
+# Faz o comando "py" usar sempre o 3.12 (ignora instalações antigas quebradas)
+[Environment]::SetEnvironmentVariable('PY_PYTHON', '3.12', 'User')
+$env:PY_PYTHON = '3.12'
+Write-Host "Usando $(py --version)"
 
 Passo '3/4 Bibliotecas Python (cerca de 300 MB, alguns minutos)'
 py -m pip install --upgrade pip --quiet
