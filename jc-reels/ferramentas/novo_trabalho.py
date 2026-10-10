@@ -5,7 +5,7 @@ Exemplo:
   py ferramentas\\novo_trabalho.py 2026-10-cabeleireiro
 Cria:
   2026-10-cabeleireiro\\material\\   coloque aqui o vídeo da decupagem (pode ser mais de um)
-  2026-10-cabeleireiro\\musica\\     coloque aqui o arquivo de música
+  2026-10-cabeleireiro\\musica\\     coloque aqui a música (áudio ou vídeo; só o som é usado)
   2026-10-cabeleireiro\\prontos\\    os Reels prontos aparecem aqui
   2026-10-cabeleireiro\\pedido.txt   preencha com o que você quer
 """

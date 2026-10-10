@@ -35,7 +35,7 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from comum import (EXT_AUDIO, args_codificador, checar_ffmpeg, codificador,  # noqa: E402
+from comum import (EXT_MUSICA, args_codificador, checar_ffmpeg, codificador,  # noqa: E402
                    hms, listar, rodar, sondar)
 
 FADE_AUDIO = 1.5   # segundos de fade da música no fim
@@ -227,7 +227,7 @@ def exportar_reels(reel, materiais, musica, prontos, tmp, largura, altura, fps, 
     r = rodar(["ffmpeg", "-hide_banner", "-v", "error", "-y",
                "-f", "concat", "-safe", "0", "-i", pasta / "lista.txt",
                "-ss", f"{reel['musica_inicio']:.3f}", "-i", musica,
-               "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-af", af,
+               "-map", "0:v", "-map", "1:a:0", "-c:v", "copy", "-af", af,
                "-c:a", "aac", "-b:a", "320k", "-ar", "48000", "-t", f"{total:.3f}",
                "-movflags", "+faststart", saida])
     if r.returncode:
@@ -265,9 +265,9 @@ def main():
     trab = Path(a.trabalho)
     plano = ler_json(trab / "plano.json", "o plano com as cenas de cada Reels")
     batidas = ler_json(trab / "analise" / "batidas.json", "rode antes o batidas.py")
-    musicas = listar(trab / "musica", EXT_AUDIO)
+    musicas = listar(trab / "musica", EXT_MUSICA)
     if not musicas:
-        sys.exit(f"ERRO: nenhum arquivo de áudio em {trab / 'musica'}")
+        sys.exit(f"ERRO: nenhuma música (áudio ou vídeo) em {trab / 'musica'}")
     musica = next((m for m in musicas if m.name == batidas.get("musica")), musicas[0])
 
     nomes = {c["material"] for r in plano["reels"] for c in r["cenas"]}
