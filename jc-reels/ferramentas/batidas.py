@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Passo 2 de cada trabalho: detecta as batidas da música.
 
-Lê o arquivo de áudio em <trabalho>/musica/ e grava <trabalho>/analise/batidas.json com:
+Lê a música em <trabalho>/musica/ (áudio, ou um vídeo do qual só o som é usado) e grava <trabalho>/analise/batidas.json com:
   bpm         andamento estimado
   batidas     tempo (s) de cada batida
   fortes      tempo (s) das batidas fortes (o "1" de cada compasso de 4)
@@ -20,7 +20,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from comum import EXT_AUDIO, checar_ffmpeg, hms, listar, rodar  # noqa: E402
+from comum import EXT_MUSICA, checar_ffmpeg, hms, listar, rodar  # noqa: E402
 
 TAXA = 22050
 DURACOES = (30, 45, 60, 75, 90)
@@ -80,9 +80,9 @@ def main():
 
     checar_ffmpeg()
     trab = Path(a.trabalho)
-    musicas = listar(trab / "musica", EXT_AUDIO)
+    musicas = listar(trab / "musica", EXT_MUSICA)
     if not musicas:
-        sys.exit(f"ERRO: nenhum arquivo de áudio em {trab / 'musica'}")
+        sys.exit(f"ERRO: nenhuma música (áudio ou vídeo) em {trab / 'musica'}")
     if len(musicas) > 1:
         print(f"Aviso: mais de uma música; usando {musicas[0].name}")
     musica = musicas[0]

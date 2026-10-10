@@ -9,8 +9,9 @@ import sys
 from functools import lru_cache
 from pathlib import Path
 
-EXT_VIDEO = {".mp4", ".mov", ".mxf", ".mts", ".m2ts", ".avi", ".mkv"}
+EXT_VIDEO = {".mp4", ".mov", ".mxf", ".mts", ".m2ts", ".avi", ".mkv", ".webm"}
 EXT_AUDIO = {".mp3", ".wav", ".m4a", ".aac", ".flac", ".ogg", ".opus"}
+EXT_MUSICA = EXT_AUDIO | EXT_VIDEO  # na pasta musica\ um vídeo também serve: só o som é usado
 
 
 def rodar(cmd, **kw):

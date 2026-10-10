@@ -20,7 +20,7 @@ C:\JC-Reels\
   ferramentas\             scripts (Python + ffmpeg)
   <trabalho>\              um por cliente, ex.: 2026-10-cabeleireiro
     material\              vídeo(s) da decupagem (4K, original — só leitura)
-    musica\                arquivo de áudio
+    musica\                música: áudio ou vídeo (só o som é usado)
     pedido.txt             quantidade, foco de cada vídeo, pessoas, duração
     plano.json             cenas escolhidas por você (Claude) para cada Reels
     analise\               quadros, folhas de contato, batidas (pode apagar depois)
