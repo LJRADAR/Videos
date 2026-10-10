@@ -10,7 +10,8 @@ $ErrorActionPreference = 'Stop'
 $raiz = 'C:\JC-Reels'
 $repo = 'https://raw.githubusercontent.com/LJRADAR/Videos/main/jc-reels'
 $arquivos = 'CLAUDE.md', 'ferramentas/comum.py', 'ferramentas/analisar.py',
-            'ferramentas/batidas.py', 'ferramentas/montar.py', 'ferramentas/novo_trabalho.py'
+            'ferramentas/batidas.py', 'ferramentas/montar.py', 'ferramentas/novo_trabalho.py',
+            'ferramentas/baixar_musica.py'
 
 function Passo($t) { Write-Host "`n== $t ==" -ForegroundColor Cyan }
 function AtualizarPath {
@@ -47,7 +48,7 @@ Write-Host "Usando $(py --version)"
 
 Passo '3/4 Bibliotecas Python (cerca de 300 MB, alguns minutos)'
 py -m pip install --upgrade pip --quiet
-py -m pip install --quiet numpy librosa soundfile pillow "opencv-python<5"
+py -m pip install --quiet --upgrade numpy librosa soundfile pillow "opencv-python<5" yt-dlp
 if ($LASTEXITCODE) { throw 'Falha ao instalar as bibliotecas Python.' }
 
 Passo '4/4 Scripts em C:\JC-Reels'
