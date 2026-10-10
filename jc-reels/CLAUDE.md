@@ -34,6 +34,9 @@ Os comandos usam `py` (o lançador do Python no Windows), rodados de dentro de `
 1. **Conferir o pedido.** Leia `X\pedido.txt`. Se faltar quantidade, duração (30, 45, 60, 75
    ou 90 s), foco de cada vídeo ou descrição da pessoa principal, pergunte tudo numa
    mensagem só antes de começar. Confira se há vídeo em `material\` e música em `musica\`.
+   Se a música vier como **link** (YouTube etc.) e `musica\` estiver vazia, baixe só o áudio:
+   `py ferramentas\baixar_musica.py X "LINK"`. Lembre o usuário, uma vez, que música com
+   direitos autorais pode ser silenciada pelo Instagram. Nunca envie nada do trabalho para fora.
 
 2. **Analisar o material** (leva alguns minutos em 4K):
    `py ferramentas\analisar.py X`
