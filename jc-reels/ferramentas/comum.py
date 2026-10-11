@@ -9,6 +9,14 @@ import sys
 from functools import lru_cache
 from pathlib import Path
 
+# No Windows, quando a saída vai para outro programa (ex.: o app Claude), o Python usa cp1252 e
+# trava em símbolos como "→". Força UTF-8 em todos os scripts.
+for _fluxo in (sys.stdout, sys.stderr):
+    try:
+        _fluxo.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
 EXT_VIDEO = {".mp4", ".mov", ".mxf", ".mts", ".m2ts", ".avi", ".mkv", ".webm"}
 EXT_AUDIO = {".mp3", ".wav", ".m4a", ".aac", ".flac", ".ogg", ".opus"}
 EXT_MUSICA = EXT_AUDIO | EXT_VIDEO  # na pasta musica\ um vídeo também serve: só o som é usado

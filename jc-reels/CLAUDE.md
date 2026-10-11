@@ -18,9 +18,12 @@ filmmaker, **não é programador**: explique o resultado, não o código.
 C:\JC-Reels\
   CLAUDE.md                este arquivo
   ferramentas\             scripts (Python + ffmpeg)
+  modelos\                 modelo de transcrição (baixado uma vez; nunca enviar áudio para fora)
+  fontes\                  fontes das letras (Montserrat ExtraBold vem no instalador)
   <trabalho>\              um por cliente, ex.: 2026-10-cabeleireiro
     material\              vídeo(s) da decupagem (4K, original — só leitura)
     musica\                música: áudio ou vídeo (só o som é usado)
+    luts\                  opcional: arquivos .cube de cor (LUT) do usuário
     pedido.txt             quantidade, foco de cada vídeo, pessoas, duração
     plano.json             cenas escolhidas por você (Claude) para cada Reels
     analise\               quadros, folhas de contato, batidas (pode apagar depois)
@@ -75,13 +78,20 @@ Os comandos usam `py` (o lançador do Python no Windows), rodados de dentro de `
    - deixe `musica_inicio` de fora para usar o trecho mais forte da música para aquela
      duração, ou escolha um ponto (o script ajusta para a batida mais próxima).
 
-6. **Conferir o plano:** `py ferramentas\montar.py X --conferir`. Corrija qualquer ERRO.
+6. **Acabamento (opcional, campos novos — ver "Acabamento" abaixo):** pergunte numa mensagem
+   só, junto com o resto do pedido, se o usuário quer legendas, textos na tela (gancho, nome do
+   salão/cliente, chamada final), LUT e som original. Não invente textos: use os que ele der.
+   Conferir o plano: `py ferramentas\montar.py X --conferir`. Corrija qualquer ERRO e repasse os
+   AVISOS (ex.: material Log sem LUT).
 
 7. **Exportar:** `py ferramentas\montar.py X` (5 Reels de 45 s levam uns 10–15 min neste
    notebook). Antes, peça ao usuário para fechar o Chrome e o CapCut: o notebook tem só 4 GB
    de RAM. Para conferir rápido antes do render final: `--previa` (540x960, em
    `prontos\previa\`). Para refazer um só: `--so 02-penteado`.
 
+   Com `legendas: true`, a primeira vez baixa o modelo de transcrição (~480 MB) se o
+   instalador ainda não baixou; depois o .srt fica em `prontos\NN-nome.srt`. Se o usuário
+   corrigir alguma palavra no .srt, troque para `legendas: "srt"` e exporte de novo com `--so`.
 8. **Entregar:** liste os arquivos de `prontos\` com a duração de cada um, resuma o
    `relatorio.txt` e pergunte se quer ajustar algum (trocar cena, ritmo, mais curto/longo).
    Ajustes = editar o `plano.json` e rodar de novo com `--so`.
@@ -125,8 +135,58 @@ Os comandos usam `py` (o lançador do Python no Windows), rodados de dentro de `
 | `zoom` | 1 = corte 9:16 máximo; 1.3–1.6 aproxima (cuidado: perde nitidez em 1080p acima de ~1.7) |
 | `velocidade` | 1 normal; 0.5 = câmera lenta 2x (só com material 50/60 fps) |
 | `nota` | texto livre que aparece no relatório |
+| `lut` | arquivo .cube de `luts\` (no plano inteiro ou por cena; `""` desliga numa cena) |
+| `som_original` | por cena, 0 a 1 (padrão 0): mistura o som da câmera; a música abaixa sozinha na fala |
+| `legendas` | no plano ou por Reels: `true` (transcreve), `"srt"` (usa o .srt editado), `false` |
+| `estilo_legenda` | no plano: `{"tamanho": 84, "cor": "branco", "destaque": "amarelo", "maiusculas": false}`; `destaque: false` tira a palavra colorida |
+| `textos` | por Reels: lista de textos na tela (ver abaixo) |
+| `fonte` | no plano: nome da fonte (padrão Montserrat ExtraBold; sem ela, Arial Black) |
+
+## Acabamento: quando usar cada campo
+
+Quem não usar estes campos recebe o mesmo vídeo de antes. Só o volume muda: **o áudio final
+sai sempre em -14 LUFS, com pico de no máximo -1 dBTP** (padrão do Instagram).
+
+- **`lut`**: quando o material for **Log** (o `--conferir` avisa: imagem lavada, pouca cor) ou
+  quando o usuário pedir um "look". O usuário coloca o .cube em `X\luts\`. A cor é aplicada
+  depois do corte e da redução, para pesar menos (é o recurso mais pesado: cerca de +1 min por
+  Reels de 45 s no notebook).
+- **`legendas: true`**: quando há **fala** útil (cliente comentando, depoimento). Transcreve
+  só o som das cenas usadas, em português, no próprio notebook. 2 a 4 palavras por vez, palavra
+  da vez destacada, dentro da área segura do Instagram. Sem fala, não use (sairia vazio ou com
+  palavras inventadas a partir de ruído).
+- **`textos`**: lista de `{"texto", "inicio", "duracao", "estilo", "posicao"}`.
+  Estilos: `"gancho"` (grande, no alto, entra com "pop" — use nos 0–3 s), `"nome"` (pequeno
+  com caixa, abaixo das legendas — nome do salão/profissional), `"chamada"` (amarelo, no meio
+  — fim do vídeo: "Agende seu horário"), `"simples"`. `posicao`: `"topo"`, `"centro"`,
+  `"baixo"` ou um número de 0 a 1 (altura). Opcionais: `tamanho`, `cor`, `fonte`.
+  Textos curtos (até ~25 letras por linha). Não coloque texto por cima do rosto da cliente.
+- **`som_original`**: em cenas com fala ou som bonito (risada, secador, tesoura). 1 = som cheio,
+  0.3–0.5 = ambiente de fundo. A música abaixa cerca de 8 dB na fala e volta depois. Em câmera
+  lenta o som também fica lento (às vezes estranho: prefira 0 nessas cenas).
+
+Exemplo de Reels com acabamento:
+
+```json
+{"nome": "04-descontraidos", "duracao": 45, "legendas": true,
+ "textos": [
+   {"texto": "O dia da noiva", "inicio": 0, "duracao": 2.5, "estilo": "gancho"},
+   {"texto": "Studio Bella", "inicio": 3, "duracao": 3, "estilo": "nome"},
+   {"texto": "Agende seu horário", "inicio": 40, "duracao": 5, "estilo": "chamada"}],
+ "cenas": [
+   {"material": "C0001.MP4", "inicio": 83.0, "batidas": 4, "som_original": 1, "lut": "rec709.cube"}]}
+```
 
 ## Detalhes técnicos
+
+- **Uma codificação só:** cor, legendas e textos são aplicados dentro da codificação de cada
+  cena (com o tempo ajustado para a cena). Texto que atravessa um corte é dividido no corte,
+  igual dos dois lados; fade/"pop" só no começo real. As cenas são unidas sem recodificar.
+- A transcrição roda num processo separado (libera ~1 GB de RAM ao terminar) e fica guardada em
+  `analise\legendas\`: refazer a exportação não transcreve de novo se as cenas não mudaram.
+- Áudio: música + som original → mixagem (música abaixa na fala) → loudnorm em duas passadas.
+  Se a música for muito "dinâmica", o limite de pico manda e o volume pode ficar até ~1 LU
+  abaixo de -14 (normal).
 
 - Material 4K 16:9 → corte 9:16 de 1215x2160 reduzido para 1080x1920: não perde qualidade.
   Em `2160x3840` o corte é ampliado (fica mais suave); avise o usuário.
