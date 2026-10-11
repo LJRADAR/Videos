@@ -11,7 +11,8 @@ $raiz = 'C:\JC-Reels'
 $repo = 'https://raw.githubusercontent.com/LJRADAR/Videos/main/jc-reels'
 $arquivos = 'CLAUDE.md', 'ferramentas/comum.py', 'ferramentas/analisar.py',
             'ferramentas/batidas.py', 'ferramentas/montar.py', 'ferramentas/novo_trabalho.py',
-            'ferramentas/baixar_musica.py'
+            'ferramentas/baixar_musica.py', 'ferramentas/acabamento.py', 'ferramentas/transcrever.py'
+$fonte = 'https://raw.githubusercontent.com/JulietaUla/Montserrat/master/fonts/ttf/Montserrat-ExtraBold.ttf'
 
 function Passo($t) { Write-Host "`n== $t ==" -ForegroundColor Cyan }
 function AtualizarPath {
@@ -46,18 +47,26 @@ else {
 $env:PY_PYTHON = '3.12'
 Write-Host "Usando $(py --version)"
 
-Passo '3/4 Bibliotecas Python (cerca de 300 MB, alguns minutos)'
+Passo '3/4 Bibliotecas Python (cerca de 500 MB, alguns minutos)'
 py -m pip install --upgrade pip --quiet
-py -m pip install --quiet --upgrade numpy librosa soundfile pillow "opencv-python<5" yt-dlp
+py -m pip install --quiet --upgrade numpy librosa soundfile pillow "opencv-python<5" yt-dlp faster-whisper
 if ($LASTEXITCODE) { throw 'Falha ao instalar as bibliotecas Python.' }
 
 Passo '4/4 Scripts em C:\JC-Reels'
-New-Item -ItemType Directory -Force -Path "$raiz\ferramentas" | Out-Null
+foreach ($p in 'ferramentas', 'modelos', 'fontes') { New-Item -ItemType Directory -Force -Path "$raiz\$p" | Out-Null }
 foreach ($a in $arquivos) {
     $destino = Join-Path $raiz ($a -replace '/', '\')
     Invoke-WebRequest "$repo/$a" -OutFile $destino -UseBasicParsing
     Write-Host "  $destino"
 }
+
+Passo 'Fonte e modelo de transcrição (só na primeira vez)'
+$arqFonte = "$raiz\fontes\Montserrat-ExtraBold.ttf"
+if (-not (Test-Path $arqFonte)) { Invoke-WebRequest $fonte -OutFile $arqFonte -UseBasicParsing; Write-Host "  $arqFonte" }
+else { Write-Host '  fonte já instalada.' }
+# baixa o modelo "small" (~480 MB) uma vez; o áudio dos trabalhos nunca sai do notebook
+py -c "from faster_whisper import WhisperModel; WhisperModel('small', device='cpu', compute_type='int8', download_root=r'$raiz\modelos'); print('  modelo de transcrição pronto.')"
+if ($LASTEXITCODE) { Write-Host '  Aviso: o modelo não baixou agora; ele será baixado na primeira legenda.' -ForegroundColor Yellow }
 
 Passo 'Teste'
 py -c "import sys; sys.path.insert(0, r'$raiz\ferramentas'); import cv2, librosa, PIL; from comum import codificador; print('Bibliotecas OK. Codificador de vídeo:', codificador())"

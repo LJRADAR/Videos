@@ -1,3 +1,5 @@
 analise/
 __pycache__/
 *.tmp
+jc-reels/modelos/
+jc-reels/fontes/

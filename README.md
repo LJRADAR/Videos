@@ -42,3 +42,6 @@ Reels 9:16 cortados no ritmo. Tudo roda no notebook; nada vai para a internet.
   `powershell -ExecutionPolicy Bypass -File instalar.ps1`. Ele instala ffmpeg, Python e as
   bibliotecas, e copia os scripts para `C:\JC-Reels`.
 - Processo completo: `jc-reels/CLAUDE.md`.
+- Acabamento opcional (campos do `plano.json`): cor com LUT (`lut`), legendas automáticas em
+  português (`legendas`), textos na tela (`textos`), som original com a música abaixando na fala
+  (`som_original`). O volume sai sempre em -14 LUFS (padrão do Instagram).
